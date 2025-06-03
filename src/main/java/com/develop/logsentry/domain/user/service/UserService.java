@@ -88,12 +88,22 @@ public class UserService {
         return new LoginResponseDto(jwtUtil.createToken(email, password, role));
     }
 
+    /** 마이페이지 조회
+     *
+     * @param user
+     * @return UserProfileResponseDto
+     */
     public UserProfileResponseDto getMyProfile(User user) {
         if (user == null) { throw new CustomException(ErrorCode.USER_NOT_FOUND);}
 
         return new UserProfileResponseDto(user.getId(), user.getEmail(), user.getUsername(), List.of(user.getRole()));
     }
 
+    /** 회원 탈퇴
+     *
+     * @param user
+     * @param deleteRequestDto
+     */
     @Transactional
     public void withdraw(User user, DeleteRequestDto deleteRequestDto) {
         User activeUser = userRepository.findByEmailAndIsActiveTrueOrThrow(user.getEmail());
