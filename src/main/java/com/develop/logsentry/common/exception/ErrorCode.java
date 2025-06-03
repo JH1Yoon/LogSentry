@@ -20,6 +20,10 @@ public enum ErrorCode {
     private final HttpStatus status;
     private final String message;
 
+    public String getFormattedMessage(Object... args) {
+        return String.format(this.message, args);
+    }
+
     ErrorCode(HttpStatus httpStatus, String message){
         this.status = httpStatus;
         this.message = message;

@@ -4,15 +4,12 @@ import lombok.Getter;
 
 @Getter
 public class CustomException extends RuntimeException {
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
+    private final Object[] args;
 
-    public CustomException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+    public CustomException(ErrorCode errorCode, Object... args) {
+        super(errorCode.getFormattedMessage(args));
         this.errorCode = errorCode;
-    }
-
-    public CustomException(ErrorCode errorCode, String detail) {
-        super(String.format(errorCode.getMessage(), detail));
-        this.errorCode = errorCode;
+        this.args = args;
     }
 }

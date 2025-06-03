@@ -12,32 +12,39 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomException(CustomException ex) {
-        return getErrorResponse(ex.getErrorCode().getStatus(), ex.getMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
-        return getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+        return new ResponseEntity<>(
+                ErrorResponse.from(ex.getErrorCode(), ex.getArgs()),
+                ex.getErrorCode().getStatus()
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return getErrorResponse(HttpStatus.BAD_REQUEST, ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        return getErrorResponse(HttpStatus.BAD_REQUEST, errorMessage);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDeniedException(AccessDeniedException ex) {
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         return getErrorResponse(HttpStatus.FORBIDDEN, "접근이 거부되었습니다.");
     }
 
-    public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", status.name());
-        errorResponse.put("code", status.value());
-        errorResponse.put("message", message);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        return getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
 
+    private ResponseEntity<ErrorResponse> getErrorResponse(ErrorCode errorCode) {
+        return new ResponseEntity<>(ErrorResponse.from(errorCode), errorCode.getStatus());
+    }
+
+    private ResponseEntity<ErrorResponse> getErrorResponse(HttpStatus status, String message) {
+        ErrorResponse errorResponse = ErrorResponse.of(
+                status.value(),
+                message,
+                status.name()
+        );
         return new ResponseEntity<>(errorResponse, status);
     }
 }
