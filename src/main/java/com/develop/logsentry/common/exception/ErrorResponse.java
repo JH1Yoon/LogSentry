@@ -9,19 +9,19 @@ import lombok.Getter;
 @Schema(description = "에러 응답")
 public class ErrorResponse {
 
-    @Schema(description = "HTTP 상태 코드", example = "401")
+    @Schema(description = "HTTP 상태 코드")
     private int code;
 
-    @Schema(description = "에러 메시지", example = "입력한 키가 관리자 키와 맞지않습니다.")
+    @Schema(description = "에러 메시지")
     private String message;
 
-    @Schema(description = "HTTP 상태명", example = "UNAUTHORIZED")
+    @Schema(description = "HTTP 상태명")
     private String status;
 
-    public static ErrorResponse from(ErrorCode errorCode) {
+    public static ErrorResponse from(ErrorCode errorCode, Object... args) {
         return of(
                 errorCode.getStatus().value(),
-                errorCode.getMessage(),
+                errorCode.getFormattedMessage(args),
                 errorCode.getStatus().name()
         );
     }
