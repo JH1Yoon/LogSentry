@@ -1,5 +1,7 @@
 package com.develop.logsentry.domain.team.controller;
 
+import com.develop.logsentry.common.message.SuccessMessage;
+import com.develop.logsentry.common.message.SuccessResponse;
 import com.develop.logsentry.common.security.UserDetailsImpl;
 import com.develop.logsentry.domain.team.dto.request.InviteRequestDto;
 import com.develop.logsentry.domain.team.dto.request.TeamRequestDto;
@@ -9,7 +11,6 @@ import com.develop.logsentry.domain.team.dto.response.TeamResponseDto;
 import com.develop.logsentry.domain.team.dto.response.TeamSummaryResponseDto;
 import com.develop.logsentry.domain.team.dto.response.UpdateMemberResponseDto;
 import com.develop.logsentry.domain.team.service.TeamService;
-import com.develop.logsentry.domain.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,13 +40,14 @@ public class TeamController {
 
     // 팀 초대 (이메일 기반)
     @PostMapping("/{teamId}/invite")
-    public ResponseEntity<Void> inviteUserToTeam(
+    public ResponseEntity<SuccessResponse> inviteUserToTeam(
             @PathVariable Long teamId,
             @Valid @RequestBody InviteRequestDto inviteRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         teamService.inviteUser(teamId, inviteRequestDto, userDetails.getUser());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(SuccessMessage.INVITATION_SEND_SUCCESS.getStatus())
+                .body(new SuccessResponse(SuccessMessage.INVITATION_SEND_SUCCESS.getStatus().value(), SuccessMessage.INVITATION_SEND_SUCCESS.getMessage()));
     }
 
     // 팀 멤버 목록 조회
@@ -70,10 +72,15 @@ public class TeamController {
 
     // 팀 삭제
     @DeleteMapping("/{teamId}")
-    public void deleteTeam(
+    public ResponseEntity<SuccessResponse> deleteTeam(
             @PathVariable Long teamId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         teamService.deleteTeam(teamId, userDetails.getUser());
+        return ResponseEntity.status(SuccessMessage.DELETED.getStatus())
+                .body(new SuccessResponse(
+                        SuccessMessage.DELETED.getStatus().value(),
+                        SuccessMessage.DELETED.getMessage("팀")
+                ));
     }
 }

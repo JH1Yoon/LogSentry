@@ -118,9 +118,7 @@ public class TeamService {
             return;
         }
 
-        if (invitationRepository.existsByEmailAndTeam(inviteRequestDto.getEmail(), team)) {
-            throw new CustomException(ErrorCode.ALREADY_INVITED);
-        }
+        invitationRepository.throwIfAlreadyInvited(inviteRequestDto.getEmail(), team);
 
         invitationRepository.save(Invitation.builder()
                 .email(inviteRequestDto.getEmail())
