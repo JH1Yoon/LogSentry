@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum SuccessMessage {
-
-    // Chat
-    CHAT_DELETED(HttpStatus.OK, "%s의 %s 채팅을 삭제했습니다."),
+    // Invitation
+    INVITATION_SEND_SUCCESS(HttpStatus.OK, "초대가 성공적으로 전송되었습니다."),
+    INVITATION_ACEEPT_SUCCESS(HttpStatus.OK, "초대를 수락했습니다."),
 
     // 기본 코드
     POSTED(HttpStatus.CREATED, "%s을(를) 등록했습니다."),
