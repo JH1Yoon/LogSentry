@@ -1,8 +1,8 @@
 package com.develop.logsentry.domain.project.entity;
 
-import com.develop.logsentry.common.entity.Timestamped;
 import com.develop.logsentry.domain.log.entity.Log;
 import com.develop.logsentry.domain.team.entity.Team;
+import com.develop.logsentry.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -48,4 +49,33 @@ public class Project {
     // 향후 로그 데이터와의 연관관계 (1:N)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Log> logs = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    @Column(nullable = false)
+    private boolean isActive = true;
+
+    @Column
+    private LocalDateTime deletedAt;
+
+    public String regenerateApiKey() {
+        this.apiKey = UUID.randomUUID().toString();
+        return this.apiKey;
+    }
+
+    public void update(String name, String description) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name;
+        }
+        if (description != null && !description.trim().isEmpty()) {
+            this.description = description;
+        }
+    }
+
+    public void deactivate() {
+        this.isActive = false;
+        this.deletedAt = LocalDateTime.now();
+    }
 }

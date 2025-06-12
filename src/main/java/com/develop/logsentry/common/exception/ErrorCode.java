@@ -21,6 +21,11 @@ public enum ErrorCode {
     ALREADY_INVITED(HttpStatus.CONFLICT, "이미 초대되었습니다."),
     USER_ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 가입된 유저입니다."),
 
+    // Project
+    PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 프로젝트를 찾을 수 없습니다. id = %d"),
+    NO_PROJECT_OWNER_PRIVILEGE(HttpStatus.FORBIDDEN, "프로젝트 접근 권한이 없습니다."),
+    PROJECT_INACTIVE(HttpStatus.UNAUTHORIZED, "삭제된 프로젝트입니다."),
+
     // 기본 코드
     NOT_FOUND(HttpStatus.NOT_FOUND, "%s을(를) 찾지못했습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),
