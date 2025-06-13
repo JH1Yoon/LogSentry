@@ -5,6 +5,7 @@ import com.develop.logsentry.common.exception.ErrorCode;
 import com.develop.logsentry.domain.project.dto.request.ProjectRequestDto;
 import com.develop.logsentry.domain.project.dto.request.ProjectUpdateRequestDto;
 import com.develop.logsentry.domain.project.dto.response.ApiKeyResponseDto;
+import com.develop.logsentry.domain.project.dto.response.ProjectDashboardResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectDetailResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectResponseDto;
 import com.develop.logsentry.domain.project.entity.Project;
@@ -137,6 +138,32 @@ public class ProjectService {
         projectRepository.existsByIdAndCreatedByIdOrThrow(projectId, user.getId());
 
         project.deactivate();
+    }
+
+    /** 프로젝트 통계 및 대시보드
+     *
+     * @param user
+     * @param projectId
+     * @return ProjectDashboardResponseDto
+     */
+    public ProjectDashboardResponseDto getProjectDashboard(User user, Long projectId) {
+        Project project = projectRepository.findByIdAndIsActiveTrueOrThrow(projectId);
+
+        Long teamId = project.getTeam().getId();
+        userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, user.getId());
+
+        int teamMemberCount = userTeamRepository.countByTeamId(teamId);
+        int recentLogCount = 0; // logRepository.countByProjectIdAndCreatedAtAfter(...)
+        int apiKeyUsageCount = 0; // apiKeyUsageRepository.countByProjectId(...)
+
+        return new ProjectDashboardResponseDto(
+                project.getId(),
+                project.getName(),
+                project.getCreatedAt().toString(),
+                teamMemberCount,
+                recentLogCount,
+                apiKeyUsageCount
+        );
     }
 
     /**
