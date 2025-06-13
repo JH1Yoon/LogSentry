@@ -14,6 +14,7 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     Optional<UserTeam> findByTeamIdAndUserId(Long teamId, Long userId);
     List<UserTeam> findAllByUserId(Long userId);
     List<UserTeam> findAllByTeamId(Long teamId);
+    int countByTeamId(Long teamId);
 
     boolean existsByTeamIdAndUserId(Long teamId, Long userId);
 

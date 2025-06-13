@@ -5,9 +5,11 @@ import com.develop.logsentry.common.security.UserDetailsImpl;
 import com.develop.logsentry.domain.project.dto.request.ProjectRequestDto;
 import com.develop.logsentry.domain.project.dto.request.ProjectUpdateRequestDto;
 import com.develop.logsentry.domain.project.dto.response.ApiKeyResponseDto;
+import com.develop.logsentry.domain.project.dto.response.ProjectDashboardResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectDetailResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectResponseDto;
 import com.develop.logsentry.domain.project.service.ProjectService;
+import com.develop.logsentry.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequestMapping("/v1/project")
 public class ProjectController {
     private final ProjectService projectService;
+    private final UserService userService;
 
     // 프로젝트 생성
     @PostMapping("/team/{teamId}")
@@ -65,6 +68,13 @@ public class ProjectController {
     ) {
         projectService.deleteProject(projectId, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse(200, "프로젝트가 성공적으로 삭제되었습니다."));
+    }
+
+    // 프로젝트 통계 및 대시보드
+    @GetMapping("/{projectId}/dashboard")
+    public ResponseEntity<ProjectDashboardResponseDto> getDashboard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                    @PathVariable Long projectId) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectDashboard(userDetails.getUser(), projectId));
     }
 
     // API 키 재발급
