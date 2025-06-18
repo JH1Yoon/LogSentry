@@ -1,6 +1,5 @@
 package com.develop.logsentry.domain.log.entity;
 
-import com.develop.logsentry.domain.project.entity.Project;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,40 +9,29 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Log {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 로그 레벨: INFO, WARN, ERROR 등
-    @Column(nullable = false)
-    private String level;
+    @Enumerated(EnumType.STRING)
+    private LogLevel logLevel;
 
-    // 핵심 메시지
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String message;
+    private String exceptionName;     // ex: CustomException
 
-    // 로그 발생 시간
-    private LocalDateTime loggedAt;
+    private String errorCodeMessage;  // ex: USER_NOT_FOUND: 사용자 정보를 찾을 수 없습니다.
 
-    // 메타 정보
-    private String serviceName;
-    private String serverIp;
-    private String traceId; // 분산 트레이싱용
+    @Column(columnDefinition = "TEXT")
+    private String message;           // ex: 해당 아이디의 사용자가 존재하지 않습니다.
 
-    // 프로젝트 연관관계 (로그는 특정 프로젝트에 속함)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
+    @Column(columnDefinition = "TEXT")
+    private String stackSummary;      // ex: CustomException at com.example.user.UserService.findUser(UserService.java:57)
 
-    @PrePersist
-    public void onCreate() {
-        if (this.loggedAt == null) {
-            this.loggedAt = LocalDateTime.now();
-        }
-    }
+    private LocalDateTime timestamp;  // ex: 2025-06-18T15:30:00
 }
