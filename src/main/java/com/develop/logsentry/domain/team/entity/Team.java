@@ -35,10 +35,12 @@ public class Team {
     }
 
     // 사용자와의 다대다 관계 (중간 테이블 사용)
+    @Builder.Default
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserTeam> userTeams = new HashSet<>();
 
     // 프로젝트와의 관계
+    @Builder.Default
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Project> projects = new HashSet<>();
 }

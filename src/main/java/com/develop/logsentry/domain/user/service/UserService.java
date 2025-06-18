@@ -52,7 +52,7 @@ public class UserService {
             if (inputAdminKey.equals(adminKey)) {
                 role = UserRoleEnum.ADMIN;
             } else {
-                throw new CustomException(ErrorCode.INVALID_ADMIN_KEY);
+                throw new CustomException(ErrorCode.INVALID_ADMIN_KEY, "USER");
             }
         }
 
@@ -65,6 +65,7 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+
         return new SignupResponseDto(email, username, List.of(role));
     }
 
@@ -82,10 +83,11 @@ public class UserService {
         String password = loginRequestDto.getPassword();
         String existPassword = user.getPassword();
 
-        // 비밀번호 확인
         checkPassword(password, existPassword);
 
-        return new LoginResponseDto(jwtUtil.createToken(email, password, role));
+        String token = jwtUtil.createToken(email, password, role);
+
+        return new LoginResponseDto(token);
     }
 
     /** 마이페이지 조회
@@ -94,7 +96,7 @@ public class UserService {
      * @return UserProfileResponseDto
      */
     public UserProfileResponseDto getMyProfile(User user) {
-        if (user == null) { throw new CustomException(ErrorCode.USER_NOT_FOUND);}
+        if (user == null) { throw new CustomException(ErrorCode.USER_NOT_FOUND, "USER");}
 
         return new UserProfileResponseDto(user.getId(), user.getEmail(), user.getUsername(), List.of(user.getRole()));
     }
@@ -114,10 +116,9 @@ public class UserService {
     }
 
     // 비밀번호 확인
-
     private void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS, "USER");
         }
     }
 }

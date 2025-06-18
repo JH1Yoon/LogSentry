@@ -14,18 +14,23 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByTeamId(Long teamId);
     boolean existsByIdAndCreatedById(Long projectId, Long userId);
     Optional<Project> findByIdAndIsActiveTrue(Long projectId);
+    Optional<Project> findByApiKeyAndIsActiveTrue(String apiKey);
 
     default Project findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND, id));
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND, "PROJECT", id));
     }
 
     default void existsByIdAndCreatedByIdOrThrow(Long projectId, Long userId) {
         if (!existsByIdAndCreatedById(projectId, userId)) {
-            throw new CustomException(ErrorCode.NO_PROJECT_OWNER_PRIVILEGE);
+            throw new CustomException(ErrorCode.NO_PROJECT_OWNER_PRIVILEGE, "PROJECT");
         }
     }
 
     default Project findByIdAndIsActiveTrueOrThrow(Long projectId) {
-        return findByIdAndIsActiveTrue(projectId).orElseThrow(() -> new CustomException(ErrorCode.PROJECT_INACTIVE));
+        return findByIdAndIsActiveTrue(projectId).orElseThrow(() -> new CustomException(ErrorCode.PROJECT_INACTIVE, "PROJECT"));
+    }
+
+    default Project findByApiKeyAndIsActiveTrueOrThrow(String apiKey) {
+        return findByApiKeyAndIsActiveTrue(apiKey).orElseThrow(() -> new CustomException(ErrorCode.INVALID_API_KEY, "PROJECT"));
     }
 }

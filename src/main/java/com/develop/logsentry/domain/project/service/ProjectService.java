@@ -49,7 +49,7 @@ public class ProjectService {
         UserTeam userTeam = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, user.getId());
 
         if (userTeam.getRole() != TeamRole.ADMIN) {
-            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE);
+            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE, "PROJECT");
         }
 
         Project project = Project.builder()
@@ -103,7 +103,8 @@ public class ProjectService {
         return new ProjectDetailResponseDto(project.getId(), project.getName(), project.getDescription(), project.getApiKey());
     }
 
-    /** 프로젝트 정보 수정
+    /**
+     * 프로젝트 정보 수정
      *
      * @param projectId
      * @param request
@@ -140,7 +141,8 @@ public class ProjectService {
         project.deactivate();
     }
 
-    /** 프로젝트 통계 및 대시보드
+    /**
+     * 프로젝트 통계 및 대시보드
      *
      * @param user
      * @param projectId
