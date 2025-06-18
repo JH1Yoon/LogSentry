@@ -1,6 +1,5 @@
 package com.develop.logsentry.domain.project.entity;
 
-import com.develop.logsentry.domain.log.entity.Log;
 import com.develop.logsentry.domain.team.entity.Team;
 import com.develop.logsentry.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -46,15 +43,12 @@ public class Project {
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
-    // 향후 로그 데이터와의 연관관계 (1:N)
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Log> logs = new HashSet<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isActive = true;
 
     @Column

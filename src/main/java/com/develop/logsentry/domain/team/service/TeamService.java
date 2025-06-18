@@ -34,7 +34,6 @@ public class TeamService {
     private final UserTeamRepository userTeamRepository;
     private final InvitationRepository invitationRepository;
 
-
     /**
      * 팀 생성
      *
@@ -63,7 +62,6 @@ public class TeamService {
                 .build();
 
         userTeamRepository.save(userTeam);
-
 
         return new TeamResponseDto(team.getId(), team.getName(), team.getDescription(), team.getCreatedAt());
     }
@@ -100,7 +98,7 @@ public class TeamService {
         UserTeam inviterTeamRole = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, inviter.getId());
 
         if (inviterTeamRole.getRole() != TeamRole.ADMIN) {
-            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE);
+            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE, "TEAM");
         }
 
         Optional<User> optionalUser = userRepository.findByEmailAndIsActiveTrue(inviteRequestDto.getEmail());
@@ -115,6 +113,7 @@ public class TeamService {
                     .user(targetUser)
                     .role(TeamRole.MEMBER)
                     .build());
+
             return;
         }
 
@@ -128,7 +127,8 @@ public class TeamService {
                 .build());
     }
 
-    /** 팀 멤버 목록 조회
+    /**
+     * 팀 멤버 목록 조회
      *
      * @param teamId
      * @param requester
@@ -157,7 +157,7 @@ public class TeamService {
     public UpdateMemberResponseDto updateTeamMemberRole(Long teamId, Long targetUserId, String newRole, User user) {
         UserTeam admin = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, user.getId());
         if (admin.getRole() != TeamRole.ADMIN) {
-            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE);
+            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE, "TEAM");
         }
 
         UserTeam target = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, targetUserId);
@@ -166,7 +166,8 @@ public class TeamService {
         return new UpdateMemberResponseDto(target.getUser().getEmail(), target.getUser().getUsername(), target.getRole());
     }
 
-    /** 팀 삭제
+    /**
+     * 팀 삭제
      *
      * @param teamId
      * @param adminUser
@@ -175,7 +176,7 @@ public class TeamService {
     public void deleteTeam(Long teamId, User adminUser) {
         UserTeam admin = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, adminUser.getId());
         if (admin.getRole() != TeamRole.ADMIN) {
-            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE);
+            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE, "TEAM");
         }
 
         Team team = teamRepository.findByIdOrThrow(teamId);

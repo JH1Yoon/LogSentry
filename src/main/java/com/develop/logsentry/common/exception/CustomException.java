@@ -12,4 +12,16 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
         this.args = args;
     }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public String getSource() {
+        return errorCode.getSource();
+    }
 }

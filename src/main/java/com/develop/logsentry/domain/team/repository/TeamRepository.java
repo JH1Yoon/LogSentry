@@ -20,6 +20,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     }
 
     default Team findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND, "TEAM"));
     }
 }

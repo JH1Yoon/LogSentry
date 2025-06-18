@@ -19,7 +19,6 @@ public class InvitationService {
     private final InvitationRepository invitationRepository;
     private final UserTeamRepository userTeamRepository;
 
-
     /** 초대 수락
      *
      * @param token
@@ -30,11 +29,11 @@ public class InvitationService {
         Invitation invitation = invitationRepository.findByInviteTokenOrThrow(token);
 
         if (invitation.isAccepted()) {
-            throw new CustomException(ErrorCode.ALREADY_INVITED);
+            throw new CustomException(ErrorCode.ALREADY_INVITED, "INVITATION");
         }
 
         if (!invitation.getEmail().equals(user.getEmail())) {
-            throw new CustomException(ErrorCode.EMAIL_NOT_MATCH);
+            throw new CustomException(ErrorCode.EMAIL_NOT_MATCH, "INVITATION");
         }
 
         userTeamRepository.throwIfTeamIdAndUserIdExists(invitation.getTeam().getId(), user.getId());

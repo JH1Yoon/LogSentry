@@ -27,6 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     }
 
     default User findByEmailAndIsActiveTrueOrThrow(String email) {
-        return findByEmailAndIsActiveTrue(email).orElseThrow(() -> new CustomException(ErrorCode.USER_INACTIVE));
+        return findByEmailAndIsActiveTrue(email).orElseThrow(() -> new CustomException(ErrorCode.USER_INACTIVE, "USER"));
     }
 }
