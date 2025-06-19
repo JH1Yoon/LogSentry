@@ -52,7 +52,7 @@ public class UserService {
             if (inputAdminKey.equals(adminKey)) {
                 role = UserRoleEnum.ADMIN;
             } else {
-                throw new CustomException(ErrorCode.INVALID_ADMIN_KEY, "USER");
+                throw new CustomException(ErrorCode.INVALID_ADMIN_KEY, null, "USER");
             }
         }
 
@@ -96,7 +96,7 @@ public class UserService {
      * @return UserProfileResponseDto
      */
     public UserProfileResponseDto getMyProfile(User user) {
-        if (user == null) { throw new CustomException(ErrorCode.USER_NOT_FOUND, "USER");}
+        if (user == null) { throw new CustomException(ErrorCode.USER_NOT_FOUND, null, "USER");}
 
         return new UserProfileResponseDto(user.getId(), user.getEmail(), user.getUsername(), List.of(user.getRole()));
     }
@@ -118,7 +118,7 @@ public class UserService {
     // 비밀번호 확인
     private void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new CustomException(ErrorCode.INVALID_CREDENTIALS, "USER");
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS, null, "USER");
         }
     }
 }

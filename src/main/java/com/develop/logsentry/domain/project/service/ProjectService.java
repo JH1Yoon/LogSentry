@@ -1,7 +1,6 @@
 package com.develop.logsentry.domain.project.service;
 
-import com.develop.logsentry.common.exception.CustomException;
-import com.develop.logsentry.common.exception.ErrorCode;
+import com.develop.logsentry.domain.log.repository.LogRepository;
 import com.develop.logsentry.domain.project.dto.request.ProjectRequestDto;
 import com.develop.logsentry.domain.project.dto.request.ProjectUpdateRequestDto;
 import com.develop.logsentry.domain.project.dto.response.ApiKeyResponseDto;
@@ -11,7 +10,6 @@ import com.develop.logsentry.domain.project.dto.response.ProjectResponseDto;
 import com.develop.logsentry.domain.project.entity.Project;
 import com.develop.logsentry.domain.project.repository.ProjectRepository;
 import com.develop.logsentry.domain.team.entity.Team;
-import com.develop.logsentry.domain.team.entity.TeamRole;
 import com.develop.logsentry.domain.team.repository.TeamRepository;
 import com.develop.logsentry.domain.user.entity.User;
 import com.develop.logsentry.domain.user.entity.UserTeam;
@@ -21,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +31,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+    private final LogRepository logRepository;
 
     /**
      * 프로젝트 생성
@@ -47,10 +47,6 @@ public class ProjectService {
 
         Team team = teamRepository.findByIdOrThrow(teamId);
         UserTeam userTeam = userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, user.getId());
-
-        if (userTeam.getRole() != TeamRole.ADMIN) {
-            throw new CustomException(ErrorCode.NO_TEAM_ADMIN_PRIVILEGE, "PROJECT");
-        }
 
         Project project = Project.builder()
                 .team(team)
@@ -155,7 +151,7 @@ public class ProjectService {
         userTeamRepository.findByTeamIdAndUserIdOrThrow(teamId, user.getId());
 
         int teamMemberCount = userTeamRepository.countByTeamId(teamId);
-        int recentLogCount = 0; // logRepository.countByProjectIdAndCreatedAtAfter(...)
+        int recentLogCount = (int) logRepository.countByProjectIdLegacyAndTimestampAfter(projectId, LocalDateTime.now().minusDays(7));
         int apiKeyUsageCount = 0; // apiKeyUsageRepository.countByProjectId(...)
 
         return new ProjectDashboardResponseDto(

@@ -16,17 +16,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     default void throwIfEmailExists(String email) {
         if (existsByEmail(email)) {
-            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS, email);
+            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS, null, email);
         }
     }
 
     default void throwIfUsernameExists(String username) {
         if (existsByUsername(username)) {
-            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS, username);
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS, null, username);
         }
     }
 
     default User findByEmailAndIsActiveTrueOrThrow(String email) {
-        return findByEmailAndIsActiveTrue(email).orElseThrow(() -> new CustomException(ErrorCode.USER_INACTIVE, "USER"));
+        return findByEmailAndIsActiveTrue(email).orElseThrow(() -> new CustomException(ErrorCode.USER_INACTIVE, null, "USER"));
     }
 }

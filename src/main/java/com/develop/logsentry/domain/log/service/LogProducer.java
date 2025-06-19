@@ -12,11 +12,10 @@ public class LogProducer {
     private static final String TOPIC = "logs-topic";
     private final KafkaTemplate<String, LogMessageDto> kafkaTemplate;
 
-    public void sendLog(LogLevel logLevel, String exceptionName, String errorCodeMessage, String message,
-            String stackSummary, String source, String errorCategory)
-    {
-        LogMessageDto logMessage = LogMessageDto.of(logLevel, exceptionName, errorCodeMessage, message,
-                stackSummary, source, errorCategory);
+    public void sendLog(Long projectId, LogLevel logLevel, String exceptionName, String errorCodeMessage,
+                        String message, String stackSummary, String source, String errorCategory) {
+        LogMessageDto logMessage = LogMessageDto.of(projectId, logLevel, exceptionName, errorCodeMessage,
+                message, stackSummary, source, errorCategory);
         kafkaTemplate.send(TOPIC, logMessage);
     }
 }

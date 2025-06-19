@@ -29,11 +29,11 @@ public class InvitationService {
         Invitation invitation = invitationRepository.findByInviteTokenOrThrow(token);
 
         if (invitation.isAccepted()) {
-            throw new CustomException(ErrorCode.ALREADY_INVITED, "INVITATION");
+            throw new CustomException(ErrorCode.ALREADY_INVITED, null, "INVITATION");
         }
 
         if (!invitation.getEmail().equals(user.getEmail())) {
-            throw new CustomException(ErrorCode.EMAIL_NOT_MATCH, "INVITATION");
+            throw new CustomException(ErrorCode.EMAIL_NOT_MATCH, null, "INVITATION");
         }
 
         userTeamRepository.throwIfTeamIdAndUserIdExists(invitation.getTeam().getId(), user.getId());
