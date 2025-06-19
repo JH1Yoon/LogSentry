@@ -15,11 +15,11 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     default void throwIfNameExists(String name) {
         if (existsByName(name)) {
-            throw new CustomException(ErrorCode.TEAM_ALREADY_EXISTS, name);
+            throw new CustomException(ErrorCode.TEAM_ALREADY_EXISTS, null, name);
         }
     }
 
     default Team findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND, "TEAM"));
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND, null, "TEAM"));
     }
 }

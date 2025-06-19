@@ -6,19 +6,13 @@ import lombok.Getter;
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
     private final Object[] args;
+    private final Long projectId;
 
-    public CustomException(ErrorCode errorCode, Object... args) {
+    public CustomException(ErrorCode errorCode, Long projectId, Object... args) {
         super(errorCode.getFormattedMessage(args));
         this.errorCode = errorCode;
         this.args = args;
-    }
-
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
-
-    public Object[] getArgs() {
-        return args;
+        this.projectId = projectId;
     }
 
     public String getSource() {

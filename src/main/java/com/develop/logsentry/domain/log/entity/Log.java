@@ -33,5 +33,8 @@ public class Log {
     @Column(columnDefinition = "TEXT")
     private String stackSummary;      // ex: CustomException at com.example.user.UserService.findUser(UserService.java:57)
 
+    @Column(name = "project_id", nullable = true)  // 기존 프로젝트 ID 컬럼 그대로 사용
+    private Long projectIdLegacy;
+
     private LocalDateTime timestamp;  // ex: 2025-06-18T15:30:00
 }

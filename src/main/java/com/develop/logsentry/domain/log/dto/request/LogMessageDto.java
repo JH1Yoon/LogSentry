@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
 @Builder
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class LogMessageDto {
+    private final Long projectId;
     private final LogLevel logLevel;
     private final String exceptionName;
     private final String errorCodeMessage;
@@ -23,9 +23,10 @@ public class LogMessageDto {
     private final LocalDateTime timestamp;
     private final String errorCategory;
 
-    public static LogMessageDto of(LogLevel logLevel, String exceptionName, String errorCodeMessage,
+    public static LogMessageDto of(Long projectId, LogLevel logLevel, String exceptionName, String errorCodeMessage,
                                    String message, String stackSummary, String source, String errorCategory) {
         return LogMessageDto.builder()
+                .projectId(projectId)
                 .logLevel(logLevel)
                 .exceptionName(exceptionName)
                 .errorCodeMessage(errorCodeMessage)

@@ -38,6 +38,7 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, LogLevel.WARN, "%s을(를) 찾지못했습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, LogLevel.ERROR, "비밀번호가 올바르지 않습니다."),
     EMAIL_NOT_MATCH(HttpStatus.CONFLICT, LogLevel.WARN, "Email이 맞지 않습니다."),
+    ACCESS_DENIED(HttpStatus.UNAUTHORIZED, LogLevel.WARN, "로그 조회는 관리자, 해당 프로젝트 생성자, 팀 생성자만 가능합니다."),
     INVALID_INVITATION_TOKEN(HttpStatus.UNAUTHORIZED, LogLevel.ERROR, "토큰이 유효하지 않습니다.");
 
     private final HttpStatus status;

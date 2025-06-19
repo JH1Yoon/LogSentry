@@ -3,6 +3,7 @@ package com.develop.logsentry.domain.log.service;
 import com.develop.logsentry.domain.log.dto.request.LogMessageDto;
 import com.develop.logsentry.domain.log.entity.Log;
 import com.develop.logsentry.domain.log.repository.LogRepository;
+import com.develop.logsentry.domain.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,10 +15,23 @@ import org.springframework.stereotype.Component;
 public class LogConsumer {
 
     private final LogRepository logRepository;
+    private final ProjectRepository projectRepository;
 
     @KafkaListener(topics = "logs-topic", groupId = "log_group")
     public void consume(LogMessageDto dto) {
         try {
+            Long projectId = null;
+            if (dto.getProjectId() != null) {
+                boolean exists = projectRepository.existsById(dto.getProjectId());
+                log.info("dto.getProjectId() = {}", dto.getProjectId());
+                if (exists) {
+                    projectId = dto.getProjectId();
+                    log.info("Kafka Log 저장 시 Project ID {} -> 존재", dto.getProjectId());
+                } else {
+                    log.info("Kafka Log 저장 시 Project ID {} -> NULL", dto.getProjectId());
+                }
+            }
+
             Log log = Log.builder()
                     .logLevel(dto.getLogLevel())
                     .exceptionName(dto.getExceptionName())
@@ -25,6 +39,7 @@ public class LogConsumer {
                     .message(dto.getMessage())
                     .stackSummary(dto.getStackSummary())
                     .timestamp(dto.getTimestamp())
+                    .projectIdLegacy(projectId)  // project 대신 ID만 넣음
                     .build();
 
             logRepository.save(log);

@@ -16,11 +16,11 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
     default void throwIfAlreadyInvited(String email, Team team) {
         if (existsByEmailAndTeam(email, team)) {
-            throw new CustomException(ErrorCode.ALREADY_INVITED, "INVITATION");
+            throw new CustomException(ErrorCode.ALREADY_INVITED, null, "INVITATION");
         }
     }
 
     default Invitation findByInviteTokenOrThrow(String token) {
-        return findByInviteToken(token).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITATION_TOKEN, "INVITATION"));
+        return findByInviteToken(token).orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITATION_TOKEN, null, "INVITATION"));
     }
 }

@@ -19,12 +19,12 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     boolean existsByTeamIdAndUserId(Long teamId, Long userId);
 
     default UserTeam findByTeamIdAndUserIdOrThrow(Long teamId, Long userId) {
-        return findByTeamIdAndUserId(teamId, userId).orElseThrow(() -> new CustomException(ErrorCode.TEAM_ACCESS_DENIED, "USER_TEAM"));
+        return findByTeamIdAndUserId(teamId, userId).orElseThrow(() -> new CustomException(ErrorCode.TEAM_ACCESS_DENIED, null, "USER_TEAM"));
     }
 
     default void throwIfTeamIdAndUserIdExists(Long teamId, Long userId) {
         if(existsByTeamIdAndUserId(teamId, userId)) {
-            throw new CustomException(ErrorCode.USER_ALREADY_IN_TEAM, "USER_TEAM");
+            throw new CustomException(ErrorCode.USER_ALREADY_IN_TEAM, null, "USER_TEAM");
         }
     }
 }
