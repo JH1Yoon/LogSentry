@@ -18,15 +18,29 @@ import java.util.Optional;
 @Repository
 public interface LogRepository extends JpaRepository<Log, Long> {
     Optional<Log> findById(Long id);
+    long countByProjectIdLegacyAndTimestampAfter(Long projectIdLegacy, LocalDateTime after);
 
     default Log findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.LOG_NOT_FOUND, "LOG", id));
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.LOG_NOT_FOUND, null, "LOG", id));
     }
 
+    // 전체 로그 조회
     Page<Log> findByLogLevelAndTimestampBetween(LogLevel logLevel, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     Page<Log> findByTimestampBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
+    // 프로젝트별 필터링
+    Page<Log> findByProjectIdLegacyAndLogLevelAndTimestampBetween(Long projectIdLegacy, LogLevel logLevel, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    Page<Log> findByProjectIdLegacyAndTimestampBetween(Long projectIdLegacy, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    // 전체 로그 레벨별 통계
     @Query("SELECT l.logLevel, COUNT(l) FROM Log l WHERE l.timestamp BETWEEN :start AND :end GROUP BY l.logLevel")
     List<Object[]> countGroupByLogLevel(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    // 프로젝트별 로그 레벨 통계
+    @Query("SELECT l.logLevel, COUNT(l) FROM Log l WHERE l.projectIdLegacy = :projectId AND l.timestamp BETWEEN :start AND :end GROUP BY l.logLevel")
+    List<Object[]> countGroupByProjectIdAndLogLevel(@Param("projectId") Long projectId,
+                                                    @Param("start") LocalDateTime start,
+                                                    @Param("end") LocalDateTime end);
 }
