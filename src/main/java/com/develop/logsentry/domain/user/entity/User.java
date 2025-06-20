@@ -51,4 +51,12 @@ public class User extends Timestamped {
         this.isActive = false;
         this.deletedAt = LocalDateTime.now();
     }
+
+
+    public void changeRole(UserRoleEnum newRole) {
+        if (this.role == newRole) {
+            return;
+        }
+        this.role = newRole;
+    }
 }

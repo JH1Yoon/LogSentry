@@ -3,9 +3,12 @@ package com.develop.logsentry.domain.user.repository;
 import com.develop.logsentry.common.exception.CustomException;
 import com.develop.logsentry.common.exception.ErrorCode;
 import com.develop.logsentry.domain.user.entity.User;
+import com.develop.logsentry.domain.user.entity.UserRoleEnum;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,6 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
     Optional<User> findByEmailAndIsActiveTrue(String email);
+    Optional<User> findByIdAndIsActiveTrue(Long id);
+
+    List<User> findByEmailContainingIgnoreCase(String email, Pageable pageable);
+    List<User> findByRole(UserRoleEnum role, Pageable pageable);
 
     default void throwIfEmailExists(String email) {
         if (existsByEmail(email)) {
@@ -28,5 +35,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     default User findByEmailAndIsActiveTrueOrThrow(String email) {
         return findByEmailAndIsActiveTrue(email).orElseThrow(() -> new CustomException(ErrorCode.USER_INACTIVE, null, "USER"));
+    }
+
+    default User findByIdAndIsActiveTrueOrThrow(Long id) {
+        return findByIdAndIsActiveTrue(id).orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED, null, "ADMIN"));
     }
 }
