@@ -12,4 +12,9 @@ public class ProjectUpdateRequestDto {
 
     @Schema(description = "프로젝트 설명 (선택)", example = "Updated project description", nullable = true)
     private String description;
+
+    public ProjectUpdateRequestDto(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

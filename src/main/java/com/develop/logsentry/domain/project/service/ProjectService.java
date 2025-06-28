@@ -57,9 +57,9 @@ public class ProjectService {
                 .isActive(true)
                 .build();
 
-        projectRepository.save(project);
+        Project saved = projectRepository.save(project);
 
-        return new ProjectResponseDto(project);
+        return new ProjectResponseDto(saved);
 
     }
 

@@ -9,4 +9,9 @@ public class TeamRequestDto {
     private String name;
 
     private String description;
+
+    public TeamRequestDto(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

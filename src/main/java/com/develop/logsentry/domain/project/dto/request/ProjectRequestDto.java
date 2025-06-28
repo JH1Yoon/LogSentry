@@ -11,4 +11,9 @@ public class ProjectRequestDto {
     private String name;
 
     private String description;
+
+    public ProjectRequestDto(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

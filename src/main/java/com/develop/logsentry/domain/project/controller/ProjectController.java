@@ -9,7 +9,6 @@ import com.develop.logsentry.domain.project.dto.response.ProjectDashboardRespons
 import com.develop.logsentry.domain.project.dto.response.ProjectDetailResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectResponseDto;
 import com.develop.logsentry.domain.project.service.ProjectService;
-import com.develop.logsentry.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequestMapping("/v1/project")
 public class ProjectController {
     private final ProjectService projectService;
-    private final UserService userService;
 
     // 프로젝트 생성
     @PostMapping("/team/{teamId}")
