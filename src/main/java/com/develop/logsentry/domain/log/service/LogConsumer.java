@@ -1,7 +1,9 @@
 package com.develop.logsentry.domain.log.service;
 
+import com.develop.logsentry.domain.alert.service.AlertService;
 import com.develop.logsentry.domain.log.dto.request.LogMessageDto;
 import com.develop.logsentry.domain.log.entity.Log;
+import com.develop.logsentry.domain.log.entity.LogLevel;
 import com.develop.logsentry.domain.log.repository.LogRepository;
 import com.develop.logsentry.domain.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LogConsumer {
 
+    private final AlertService alertService;
     private final LogRepository logRepository;
     private final ProjectRepository projectRepository;
 
@@ -39,10 +42,14 @@ public class LogConsumer {
                     .message(dto.getMessage())
                     .stackSummary(dto.getStackSummary())
                     .timestamp(dto.getTimestamp())
-                    .projectIdLegacy(projectId)  // project 대신 ID만 넣음
+                    .projectIdLegacy(projectId)
                     .build();
 
             logRepository.save(log);
+
+            if (dto.getLogLevel().equals(LogLevel.ERROR)) {
+                alertService.sendLogErrorAlert(dto);
+            }
 
         } catch (Exception e) {
             System.err.println("Kafka 메시지 처리 실패: " + e.getMessage());

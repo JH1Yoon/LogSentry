@@ -1,5 +1,6 @@
 package com.develop.logsentry.domain.log.service;
 
+import com.develop.logsentry.domain.alert.service.AlertService;
 import com.develop.logsentry.domain.log.dto.request.LogMessageDto;
 import com.develop.logsentry.domain.log.entity.Log;
 import com.develop.logsentry.domain.log.entity.LogLevel;
@@ -25,6 +26,9 @@ class LogConsumerTest {
     private LogConsumer logConsumer;
 
     @Mock
+    private AlertService alertService;
+
+    @Mock
     private LogRepository logRepository;
 
     @Mock
@@ -32,9 +36,10 @@ class LogConsumerTest {
 
     @BeforeEach
     void setUp() {
+        alertService = mock(AlertService.class);
         logRepository = mock(LogRepository.class);
         projectRepository = mock(ProjectRepository.class);
-        logConsumer = new LogConsumer(logRepository, projectRepository);
+        logConsumer = new LogConsumer(alertService, logRepository, projectRepository);
     }
 
 
@@ -60,6 +65,7 @@ class LogConsumerTest {
         // Then
         ArgumentCaptor<Log> captor = ArgumentCaptor.forClass(Log.class);
         verify(logRepository).save(captor.capture());
+        verify(alertService).sendLogErrorAlert(dto);
 
         Log savedLog = captor.getValue();
         assertThat(savedLog.getProjectIdLegacy()).isEqualTo(1L);
@@ -89,6 +95,7 @@ class LogConsumerTest {
         // Then
         ArgumentCaptor<Log> captor = ArgumentCaptor.forClass(Log.class);
         verify(logRepository).save(captor.capture());
+        verify(alertService, never()).sendLogErrorAlert(any());
 
         Log savedLog = captor.getValue();
         assertThat(savedLog.getProjectIdLegacy()).isNull();
