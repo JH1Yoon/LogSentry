@@ -9,6 +9,9 @@ import com.develop.logsentry.domain.project.dto.response.ProjectDashboardRespons
 import com.develop.logsentry.domain.project.dto.response.ProjectDetailResponseDto;
 import com.develop.logsentry.domain.project.dto.response.ProjectResponseDto;
 import com.develop.logsentry.domain.project.service.ProjectService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,67 +24,75 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/project")
+@Tag(name = "Project", description = "프로젝트 관련 API")
 public class ProjectController {
+
     private final ProjectService projectService;
 
-    // 프로젝트 생성
+    @Operation(summary = "프로젝트 생성", description = "지정한 팀에 새로운 프로젝트를 생성합니다.")
     @PostMapping("/team/{teamId}")
-    public ResponseEntity<ProjectResponseDto> createProject(@PathVariable Long teamId,
-                                                            @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Valid ProjectRequestDto projectRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(teamId, userDetails.getUser(), projectRequestDto));
-
+    public ResponseEntity<ProjectResponseDto> createProject(
+            @Parameter(description = "팀 ID") @PathVariable Long teamId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody ProjectRequestDto projectRequestDto
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(projectService.createProject(teamId, userDetails.getUser(), projectRequestDto));
     }
 
-    // 팀 내 프로젝트 목록 조회
+    @Operation(summary = "팀 내 프로젝트 목록 조회", description = "팀에 속한 모든 프로젝트 목록을 조회합니다.")
     @GetMapping("/team/{teamId}")
-    public ResponseEntity<List<ProjectResponseDto>> getProjectsByTeam(@PathVariable Long teamId,
-                                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectsByTeam(teamId, userDetails.getUser()));
+    public ResponseEntity<List<ProjectResponseDto>> getProjectsByTeam(
+            @Parameter(description = "팀 ID") @PathVariable Long teamId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(projectService.getProjectsByTeam(teamId, userDetails.getUser()));
     }
 
-    // 프로젝트 상세 조회
+    @Operation(summary = "프로젝트 상세 조회", description = "프로젝트의 상세 정보를 조회합니다.")
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectDetailResponseDto> getProjectById(
-            @PathVariable Long projectId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @Parameter(description = "프로젝트 ID") @PathVariable Long projectId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectDetail(projectId, userDetails.getUser()));
+        return ResponseEntity.ok(projectService.getProjectDetail(projectId, userDetails.getUser()));
     }
 
-    // 프로젝트 정보 수정
+    @Operation(summary = "프로젝트 수정", description = "프로젝트 정보를 수정합니다.")
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDto> updateProject(
-            @PathVariable Long projectId,
+            @Parameter(description = "프로젝트 ID") @PathVariable Long projectId,
             @Valid @RequestBody ProjectUpdateRequestDto dto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(projectId, dto, userDetails.getUser()));
+        return ResponseEntity.ok(projectService.updateProject(projectId, dto, userDetails.getUser()));
     }
 
-    // 프로젝트 삭제
+    @Operation(summary = "프로젝트 삭제", description = "프로젝트를 삭제합니다.")
     @DeleteMapping("/{projectId}")
     public ResponseEntity<SuccessResponse> deleteProject(
-            @PathVariable Long projectId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @Parameter(description = "프로젝트 ID") @PathVariable Long projectId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         projectService.deleteProject(projectId, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse(200, "프로젝트가 성공적으로 삭제되었습니다."));
     }
 
-    // 프로젝트 통계 및 대시보드
+    @Operation(summary = "프로젝트 대시보드 조회", description = "프로젝트 통계 및 활동 대시보드를 조회합니다.")
     @GetMapping("/{projectId}/dashboard")
-    public ResponseEntity<ProjectDashboardResponseDto> getDashboard(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                    @PathVariable Long projectId) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectDashboard(userDetails.getUser(), projectId));
+    public ResponseEntity<ProjectDashboardResponseDto> getDashboard(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Parameter(description = "프로젝트 ID") @PathVariable Long projectId
+    ) {
+        return ResponseEntity.ok(projectService.getProjectDashboard(userDetails.getUser(), projectId));
     }
 
-    // API 키 재발급
+    @Operation(summary = "API 키 재발급", description = "해당 프로젝트의 API 키를 재발급합니다.")
     @PostMapping("/{projectId}/apikey/regenerate")
     public ResponseEntity<ApiKeyResponseDto> regenerateApiKey(
-            @PathVariable Long projectId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @Parameter(description = "프로젝트 ID") @PathVariable Long projectId,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.regenerateApiKey(projectId, userDetails.getUser()));
+        return ResponseEntity.ok(projectService.regenerateApiKey(projectId, userDetails.getUser()));
     }
-
 }

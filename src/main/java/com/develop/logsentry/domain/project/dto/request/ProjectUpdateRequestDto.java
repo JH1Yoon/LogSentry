@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ProjectUpdateRequestDto {
-    @Schema(description = "프로젝트 이름 (선택)", example = "New Project Name", nullable = true)
+    @Schema(description = "프로젝트 이름 (선택)", example = "새로운 프로젝트 이름", nullable = true)
     private String name;
 
-    @Schema(description = "프로젝트 설명 (선택)", example = "Updated project description", nullable = true)
+    @Schema(description = "프로젝트 설명 (선택)", example = "업데이트된 프로젝트 설명", nullable = true)
     private String description;
 
     public ProjectUpdateRequestDto(String name, String description) {

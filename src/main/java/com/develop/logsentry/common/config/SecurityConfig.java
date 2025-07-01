@@ -29,8 +29,11 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .requestMatchers("/v1/user/signup", "/v1/user/login").permitAll()
-                        .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
+                        .requestMatchers(
+                                "/v1/user/signup", "/v1/user/login",
+                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html"
+                        ).permitAll()
+                        .anyRequest().authenticated()
         );
 
         http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);

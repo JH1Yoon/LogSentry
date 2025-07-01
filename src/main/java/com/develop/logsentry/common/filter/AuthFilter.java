@@ -28,14 +28,25 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private static final Set<String> ALLOWED_PATHS = Set.of("/v1/user/signup", "/v1/user/login");
+    private static final Set<String> EXACT_PATHS = Set.of("/v1/user/signup", "/v1/user/login");
+    private static final String[] SWAGGER_PATH_PREFIXES = {
+            "/swagger", "/v3/api-docs", "/swagger-ui", "/swagger-resources", "/webjars"
+    };
+
+    private boolean isSwaggerRequest(String uri) {
+        for (String prefix : SWAGGER_PATH_PREFIXES) {
+            if (uri.startsWith(prefix)) return true;
+        }
+        return false;
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
 
-        if (ALLOWED_PATHS.contains(uri)) {
+        if (EXACT_PATHS.contains(uri) || isSwaggerRequest(uri)) {
             chain.doFilter(request, response);
             return;
         }
